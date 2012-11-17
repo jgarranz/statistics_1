@@ -63,6 +63,28 @@ sub media_rangos{
 ##### FIN BLOQUE MEDIA #####
 ##### BLOQUE MEDIANA #####
 sub mediana{
+        # Check datos
+        foreach $key ( sort  keys %xi) {
+                if ( $key =~ /[0-9]+-[0-9]+/){
+                        $tipon=1;
+                } else {
+                        $tipon=0;
+                }
+                if($tipo == 1 and $tipon == 0){
+                        die "BAD tipos";
+                }
+                $tipo = $tipon;
+        }
+
+
+        if ( $tipo == 0 ){
+                &mediana_normal;
+        } else {
+                &mediana_rangos;
+        }
+}
+
+sub mediana_normal{
 	my $mitad = 0;
 	my $mitadx = 0;
 	my $observaciones = keys(%xi);	
@@ -89,15 +111,26 @@ sub mediana{
 		if($mode == 2) { printf("Mediana: %s \n", ($sort_arrayxi[$mitad] + $sort_arrayxi[$mitad + 1]) / 2 ) };
 	} else {
 		$mitad = $totalni / 2;
-		foreach $key ( sort keys %xi ){
+		foreach $key ( sort { $a <=> $b } keys %xi ){
 			printf("Key: %s , Value: %s \n ", $key , $xi{$key});
 			$mitadx = $mitadx + $xi{$key} ;
-			if($mitadx >= $mitad){ printf("Mediana: %s \n ", $mitadx)} ;
+			if($mitadx >= $mitad){ printf("Mediana: %s \n ", $mitadx) ; exit} ;
 		}
 	}
 }
 
+sub mediana_rangos{
+	my $mitad = 0;
+	my $mitadx = 0;
+	$mitad = $totalni / 2;
+	printf("%s %s\n", $totalni, $mitad);	
+	for $key ( sort { $a <=> $b } keys %xi ){
+                printf("Key: %s , Value: %s , mitadx: %s\n ", $key , $xi{$key}, $mitadx);
+#		$mitadx = $mitadx + $xi{$key};
+#		if($mitadx >= $mitad){ printf("Mediana: %s \n ", $mitadx) ; exit} ;	
+	}
 
+}
 
 
 #MAIN
