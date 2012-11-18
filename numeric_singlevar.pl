@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl 
 my $var;
 my %xi;
 my @ni;
@@ -111,7 +111,7 @@ sub mediana_normal{
 		if($mode == 2) { printf("Mediana: %s \n", ($sort_arrayxi[$mitad] + $sort_arrayxi[$mitad + 1]) / 2 ) };
 	} else {
 		$mitad = $totalni / 2;
-		foreach $key ( sort { $a <=> $b } keys %xi ){
+		foreach $key ( sort keys %xi ){
 			printf("Key: %s , Value: %s \n ", $key , $xi{$key});
 			$mitadx = $mitadx + $xi{$key} ;
 			if($mitadx >= $mitad){ printf("Mediana: %s \n ", $mitadx) ; exit} ;
@@ -120,14 +120,27 @@ sub mediana_normal{
 }
 
 sub mediana_rangos{
-	my $mitad = 0;
-	my $mitadx = 0;
-	$mitad = $totalni / 2;
-	printf("%s %s\n", $totalni, $mitad);	
-	for $key ( sort { $a <=> $b } keys %xi ){
-                printf("Key: %s , Value: %s , mitadx: %s\n ", $key , $xi{$key}, $mitadx);
-#		$mitadx = $mitadx + $xi{$key};
-#		if($mitadx >= $mitad){ printf("Mediana: %s \n ", $mitadx) ; exit} ;	
+	my $mitad = $totalni / 2;
+	my @array_fila ;
+	my $xi_acumulado = 0;
+	my $mediana = 0;
+	for $key ( sort { $a <=> $b }  keys %xi){
+		my @valores_tmp = split("-",$key);
+		chomp($xi{$key});
+		if($xi_acumulado == 0){ $xi_acumulado = $xi{$key}} else { $xi_acumulado = $xi_acumulado + $xi{$key}};
+		my @array_tmp = [$valores_tmp[0],$valores_tmp[1],$xi{$key},$xi_acumulado ]; 
+		push( @array_fila, @array_tmp );
+	}
+
+	for $i ( 0 .. $#array_fila ) {
+		$row = $array_fila[$i];
+		if ($array_fila[$i][3] >= $mitad){
+			printf("Mediana = %s + ( %s - %s )/ %s * ( %s - %s ) \n",$array_fila[$i][0] ,$mitad ,$array_fila[$i -1][3],$array_fila[$i][2] ,$array_fila[$i][1] , $array_fila[$i][0]);
+			$mediana = $array_fila[$i][0] + ($mitad - $array_fila[$i -1][3])/$array_fila[$i][2] * ($array_fila[$i][1] - $array_fila[$i][0]) ;	
+			printf("Mediana: %s \n ",$mediana);
+			exit;
+		}
+	#	printf("Ni acumulado: %s \n",$array_fila[$i][3]);
 	}
 
 }
